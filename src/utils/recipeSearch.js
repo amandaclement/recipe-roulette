@@ -13,23 +13,17 @@ export async function getRecipeUrls(recipeName) {
         // Construct API URL
         const url = `https://www.googleapis.com/customsearch/v1?key=${API_KEY}&cx=${CSE_ID}&q=${encodeURIComponent(query)}`;
 
-        // Make API request
+        // Make API call to get URLs, using await to pause the function execution until the promise is resolved or rejected
         const response = await axios.get(url);
 
         // Extract URLs from the response. By default, returns first 10 URLs
         const urls = response.data.items.map(item => item.link);
-
-        // Log URLs
-        console.log('Top URLs for query: ' + query);
-        urls.forEach((url, index) => {
-            console.log(`${index + 1}. ${url}`);
-        });
         
         // Return URLs
         return urls;
 
     } catch (error) {
-        console.error('Error searching for query', error);
+        console.error('Error searching for query:', error);
         return [];
     }
 }
