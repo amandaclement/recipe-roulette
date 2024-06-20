@@ -1,12 +1,14 @@
+require('dotenv').config();
+
 // Set API key and Custom Search Engine ID
-const API_KEY = process.env.REACT_APP_CS_API_KEY;
-const CSE_ID = process.env.REACT_APP_CS_ENGINE_ID;
+const API_KEY = process.env.CS_API_KEY;
+const CSE_ID = process.env.CS_ENGINE_ID;
 
 // Use Google Custom Search API to get URLs for chosen recipe
-export async function getRecipeUrls(recipeName) {
+async function getRecipeUrls(recipeName) {
     try {
         // Set search query
-        const query = 'highest rated ' + recipeName + ' recipe';
+        const query = `highest rated ${recipeName} recipe`;
 
         // Construct API URL
         const url = `https://www.googleapis.com/customsearch/v1?key=${API_KEY}&cx=${CSE_ID}&q=${encodeURIComponent(query)}`;
@@ -33,3 +35,5 @@ export async function getRecipeUrls(recipeName) {
         return [];
     }
 }
+
+module.exports = { getRecipeUrls };
