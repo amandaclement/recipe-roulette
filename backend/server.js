@@ -1,21 +1,27 @@
 const { recipeSearch } = require('./api/recipeSearch.js');
-
 const express = require('express');
 const cors = require('cors');
 const app = express();
 const port = 5000;
 
-// Tell server to allow requests from different origins to effectively communicate between the backend and frontend
+// Middleware to parse JSON bodies for incoming requests and to enable CORS requests from different origins (for backend - frontend communication)
+app.use(express.json());
 app.use(cors());
 
-// Endpoing to return the scraped recipe data
-app.get('/data', async (req, res) => {
+// Endpoint to receive recipeName via POST request and return recipes data
+app.post('/recipes', async (req, res) => {
     try {
-        const recipes = await recipeSearch('lemon cookies');
-        res.send({ recipes });
+        // Extract recipeName from the request body sent by the client
+        const recipeName = req.body.recipeName;
+
+        // Perform recipe search based on the received recipeName
+        const recipes = await recipeSearch(recipeName);
+
+        // Send response back to client
+        res.json({ recipes });
     } catch (error) {
         console.error('Error fetching recipes:', error);
-        res.status(500).send('Error fetching recipes');
+        res.status(500).json({ error: 'Error fetching recipes' });
     }
 });
   

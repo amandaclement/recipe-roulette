@@ -1,20 +1,19 @@
 import { useState } from 'react';
 
-export default function SearchForm({ recipeSearch }) {
+export default function SearchForm({ handleSubmit }) {
     const [recipeName, setRecipeName] = useState('');
 
     // Handles submit button
-    function handleSubmit(e) {
-        // Prevent page reload
+    function handleFormSubmit(e) {
         e.preventDefault();
 
-        // Lift state up by passing recipeName to recipeSearch() in App
-        recipeSearch(recipeName);
+        // Lift state up by passing recipeName to handleSubmit() in App
+        handleSubmit(recipeName);
     }
 
     return (
         <div className="search-form-container">
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleFormSubmit}>
                 <p>
                     <label>Recipe Name: </label>
                     <input type="text" value={recipeName} onChange={(e) => setRecipeName(e.target.value)} /><br/><br/>
