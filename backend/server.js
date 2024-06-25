@@ -1,33 +1,25 @@
-const { getRecipeUrls } = require('./api/recipeSearch.js');
-const { getRecipeData } = require('./api/recipeScrape.js');
+const { recipeSearch } = require('./api/recipeSearch.js');
 
-let recipes = [];
+const express = require('express');
+const cors = require('cors');
+const app = express();
+const port = 5000;
 
-// Scrape recipe URL to get relevant data
-async function recipeScrape(url) {
+// Tell server to allow requests from different origins to effectively communicate between the backend and frontend
+app.use(cors());
+
+// Endpoing to return the scraped recipe data
+app.get('/data', async (req, res) => {
     try {
-        return await getRecipeData(url);
-    } catch(error) {
-        console.error(`Error scraping recipe ${url}: `, error);
+        const recipes = await recipeSearch('lemon cookies');
+        res.send({ recipes });
+    } catch (error) {
+        console.error('Error fetching recipes:', error);
+        res.status(500).send('Error fetching recipes');
     }
-}
-
-// Search for recipe URLs, scraping relevant content from each page
-async function recipeSearch(recipeName) {
-    try {
-        // Get recipe URLs
-        const urls = await getRecipeUrls(recipeName);
-
-        // Populate recipes array and log content
-        for (let i = 0; i < urls.length; i++) {
-            recipes[i] = await recipeScrape(urls[i]);
-            console.log(recipes[i].title + ': ' + recipes[i].url);
-        }
-
-    } catch(error) {
-        console.error(`Error fetching recipe URLs for ${recipeName}: `, error);
-    }
-}
-
-// Test
-recipeSearch('lemon cookies');
+});
+  
+// Start server and listen on the specified port
+app.listen(port, () => {
+    console.log(`Server running at http://localhost:${port}`);
+}); 

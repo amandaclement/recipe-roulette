@@ -11,17 +11,14 @@ async function getRecipeData(url) {
 
     try {
         // Navigate to the recipe URL
-        await page.goto(url);
+        await page.goto(url, { waitUntil: 'domcontentloaded' });
+        const title = await page.title();
 
-        // Extract data (URL and title)
-        const data = await page.evaluate((url) => {
-            return {
-                url: url,
-                title: document.title
-            };
-        }, url); // Pass url as an argument to page.evaluate()
-
-        return data;
+        // Return url and title
+        return {
+            url: url,
+            title: title
+        };
 
     } catch(error) {
         console.error(`Error during scraping ${url}:`, error);
@@ -32,4 +29,13 @@ async function getRecipeData(url) {
     }
 }
 
-module.exports = { getRecipeData };
+// Scrape recipe URL to get relevant data
+async function recipeScrape(url) {
+    try {
+        return await getRecipeData(url);
+    } catch(error) {
+        console.error(`Error scraping recipe ${url}: `, error);
+    }
+}
+
+module.exports = { recipeScrape };

@@ -1,30 +1,32 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import SearchForm from './components/SearchForm.jsx';
 
+const backendUrl = 'http://localhost:5000';
+
 export default function App() {
-    const [recipeUrls, setRecipeUrls] = useState([]);
+    const [recipes, setRecipes] = useState([]);
 
-    // Use Custom Search API to update recipeUrls with URLs for chosen recipe
-    // async function recipeSearch(recipeName) {
-    //     try {
-    //         // Call getRecipeUrls() and wait for it to complete since getRecipeUrls() is async
-    //         const urls = await getRecipeUrls(recipeName);
-
-    //         // Update state variable
-    //         setRecipeUrls(urls);
-
-    //     } catch(error) {
-    //         console.error('Error fetching recipe URLs:', error);
-    //     }
-    // }
+    // Fetch recipes
+    useEffect(() => {
+        fetch(`${backendUrl}/data`)
+            .then(res => res.json())
+            .then(data => {
+                setRecipes(data.recipes);
+            })
+            .catch(err => {
+                console.error('Error fetching data:', err);
+            });
+    }, []);
 
     return (
         <main>
             {/* <SearchForm recipeSearch={recipeSearch} /> */}
             <ol>
-                {/* Map over recipeUrls and render each URL as a list item */}
-                {recipeUrls.map((url, index) => (
-                    <li key={index}><a href={url} target="_blank">{url}</a></li>
+                {/* Map over recipes and render as list item */}
+                {recipes.map((recipe) => (
+                    <li key={recipe.url}>
+                        <a href={recipe.url}>{recipe.title}</a>
+                    </li>
                 ))}
             </ol>
         </main>

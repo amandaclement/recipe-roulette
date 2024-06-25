@@ -1,4 +1,5 @@
 require('dotenv').config();
+const { recipeScrape } = require('./recipeScrape.js');
 
 // Set API key and Custom Search Engine ID
 const API_KEY = process.env.CS_API_KEY;
@@ -36,4 +37,24 @@ async function getRecipeUrls(recipeName) {
     }
 }
 
-module.exports = { getRecipeUrls };
+// Search for recipe URLs, scraping relevant content from each page
+async function recipeSearch(recipeName) {
+    let recipes = [];
+
+    try {
+        // Get recipe URLs
+        const urls = await getRecipeUrls(recipeName);
+
+        // Populate recipes array and log content
+        for (let i = 0; i < urls.length; i++) {
+            recipes[i] = await recipeScrape(urls[i]);
+        }
+
+        return recipes;
+
+    } catch(error) {
+        console.error(`Error fetching recipe URLs for ${recipeName}: `, error);
+    }
+}
+
+module.exports = { recipeSearch };
